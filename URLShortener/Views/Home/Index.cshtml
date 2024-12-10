@@ -1,0 +1,118 @@
+﻿@model IEnumerable<URLShortener.Models.Url>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
+}
+<style>
+    .sidenav {
+        height: 100%;
+        width: 28%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #efefef;
+        overflow-x: hidden; 
+        padding-top: 20px;
+    }
+
+    .main {
+        margin-left: 28%;
+        padding: 5% 0 0 5%;
+    }
+
+    .sidenav a i {
+        margin-left: 3%;
+        color: #6d6d6d
+    }
+
+    #logo {
+        width: 55%;
+        margin: 10% 0 12%;
+    }
+
+    .items {
+        text-align: center;
+    }
+
+    .listOfURLs {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .shortened-link {
+        color: #46ade7;
+    }
+
+    .click-count {
+        font-size: 14px;
+        color: #9bb7f4;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+
+    #submit {
+        padding: 8px 26px;
+        color: white;
+        background-color: #92278f;
+        border: none;
+        font-weight: 400;
+        display: block;
+        margin-top: 3%;
+    }
+
+    input, select {
+        border: solid 1px #9b9b9b;
+        padding: 7px;
+        width: 40%;
+        margin: 3% 1% 0 0;
+        color: #9b9b9b;
+    }
+</style>
+
+<div class="sidenav">
+    <div class="items">
+        <img src="~/AnchorzUp Logo_No Tagline.svg" id="logo" />
+        <h5> My shortened URLs</h5>
+        <div class="listOfURLs">
+            @foreach (var item in Model)
+            {
+                <div class="listItem">
+                    <a asp-controller="Home" asp-action="OpenURL" asp-route-id="@item.Id" class="shortened-link">
+                        @item.Shortened
+                    </a>
+                    <a asp-controller="Home" asp-action="Delete" asp-route-id="@item.Id" class="delete-icon">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                    @if (item.Clicked > 0)
+                    {
+                        <p class="click-count">This link has been clicked @item.Clicked times</p>
+                    }
+                </div>
+                <a href="@item.QRCode" download="QR_@item.Shortened+.png" class="download-button">
+                    Download QR Code
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="main">
+    <h2>URL Shortener</h2>
+    <form method="post" asp-action="ShortenURL">
+        <input type="text" name="main" placeholder="Paste the URL to be shortened" />
+        <select name="expiration" id="expiration">
+            <option value="" disabled selected>Add expiration date</option>
+            <option value="1">1 Minute</option>
+            <option value="5">5 Minutes</option>
+            <option value="30">30 Minutes</option>
+            <option value="60">1 hour</option>
+            <option value="300">5 hours</option>
+        </select>
+        <button type="submit" id="submit"> Shorten URL</button>
+    </form>
+</div>
+
